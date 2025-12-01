@@ -101,6 +101,10 @@ func TestNextToken(t *testing.T) {
 		{token.EOF, ""},
 	}
 
+	// Create the lexer
+	// iterate through the expected results for our input
+	// If the expected token type or the token literal value do not match
+	// what our lexer outputs, fail the test
 	l := NewLexer(input)
 
 	for i, tt := range tests {

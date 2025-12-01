@@ -1,5 +1,8 @@
 package token
 
+// We deined the TokenType to be a string, which allows us to use many
+// different values as TokenTypes which in turn allows us to distinguish
+// between different types of tokens
 // NOTE: string type may have performance hit as compared to byte or int
 type TokenType string
 
@@ -9,12 +12,14 @@ type Token struct {
 }
 
 const (
-	ILLEGAL = "ILLEGAL"
-	EOF     = "EOF"
+	ILLEGAL = "ILLEGAL" // token we dont know/understand
+	EOF     = "EOF"     // end of file
 
+	// Identifiers and literals
 	IDENT = "IDENT"
 	INT   = "INT"
 
+	// Operators
 	ASSIGN   = "="
 	PLUS     = "+"
 	MINUS    = "-"
@@ -28,6 +33,7 @@ const (
 	LT = "<"
 	GT = ">"
 
+	// Delimiters
 	COMMA     = ","
 	SEMICOLON = ";"
 
@@ -36,6 +42,7 @@ const (
 	LBRACE = "{"
 	RBRACE = "}"
 
+	// Keywords
 	FUNCTION = "FUNCTION"
 	LET      = "LET"
 	IF       = "IF"
