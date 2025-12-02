@@ -1,6 +1,6 @@
 package token
 
-// We deined the TokenType to be a string, which allows us to use many
+// We defined the TokenType to be a string, which allows us to use many
 // different values as TokenTypes which in turn allows us to distinguish
 // between different types of tokens
 // NOTE: string type may have performance hit as compared to byte or int

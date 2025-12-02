@@ -213,6 +213,23 @@ on it to go through the source code.
 
 > See lexer/lexer_test.go and lexer/lexer.go
 
+Most of the fields in the `Lexer` struct are self explanatory. The ones which
+may cause confusion are `position` and `readPosition`.
+
+Both will be used to access characters in `input` by using them as an index
+    - ex. `l.input[l.readPosition]`
+    - the reason we have both is that it will enable us to 'peek' ahead at the
+    input and look after the current character to see what comes next
+    - `readPosition` always points to the 'next' character in the input
+    - `position` points to the character in the input that corresponds to the
+    `ch` byte
+
+- NOTE: in order to support the full unicode range and not just ascii we would
+need to change the `ch` byte to a rune and read the characters differently as
+they would be multiple bytes long
+    - using `l.input[l.readPosition]` wouldnt work anymore and we'd have to
+    change other methods and functions we create later on
+
 # References 
 
 - "Writing an Interpreter in Go" by Thorsten Ball

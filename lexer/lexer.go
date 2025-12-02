@@ -5,11 +5,11 @@ import "github.com/isaacgr/go-monkey-interpreter/token"
 type Lexer struct {
 	input        string
 	position     int  // current position in input (points to current char)
-	readPosition int  // cuurent reading position in input (after current char)
+	readPosition int  // current reading position in input (after current char)
 	ch           byte // current char
 }
 
-// NOTE: If you wanted to attache line numbers and file names then this
+// NOTE: If you wanted to attach line numbers and file names then this
 // could be expanded to accept io.Reader and the filename as opposed to string
 func NewLexer(input string) *Lexer {
 	l := &Lexer{
@@ -19,23 +19,29 @@ func NewLexer(input string) *Lexer {
 	return l
 }
 
-// give the next character and advance position in the input string
+// Give us the next character and advance our position
 //
 // NOTE: Only supports ascii and not the full unicode range, would require
 // changing ch from a byte to a rune which would then change how the next chars
 // are read
 func (l *Lexer) readChar() {
 	if l.readPosition >= len(l.input) {
-		l.ch = 0
+		l.ch = 0 // ASCII code for null, which signifies we have nothing or EOF
 	} else {
-		l.ch = l.input[l.readPosition]
+		l.ch = l.input[l.readPosition] // Otherwise set it to the next character
 	}
-	l.position = l.readPosition
-	l.readPosition += 1
+	l.position = l.readPosition // position we last read
+	l.readPosition += 1         // next character
 }
 
+// We look at the current character and return a token depending on which
+// character it is
+// Before returning the token we advance our pointer into the input so the
+// next call to NextToken will already have an updated l.ch field
 func (l *Lexer) NextToken() token.Token {
 	var tok token.Token
+	// Whitespace has no meaning, so we need this to prevent failing when
+	// parsing the input string if we come across it
 	l.skipWhitespace()
 	switch l.ch {
 	case '=':
@@ -89,14 +95,21 @@ func (l *Lexer) NextToken() token.Token {
 	case 0:
 		tok.Literal = ""
 		tok.Type = token.EOF
+	// We need to recognize if the current character is a letter, and if it is
+	// it needs to read the rest of the identifier/keyword until it encounters
+	// a non letter character
+	// We then need to determine if it is an identifier or a keyword so that we
+	// can use the correct token.TokenType
 	default:
 		if isLetter(l.ch) {
 			tok.Literal = l.readIdentifier()
 			tok.Type = token.LookupIdent(tok.Literal)
+			// We return early here since readIdentifier already advances the
+			// position, so we dont want to do it again outside of the switch
 			return tok
 		} else if isDigit(l.ch) {
-			tok.Type = token.INT
 			tok.Literal = l.readNumber()
+			tok.Type = token.INT
 			return tok
 		} else {
 			tok = newToken(token.ILLEGAL, l.ch)
@@ -111,20 +124,20 @@ func newToken(tokenType token.TokenType, ch byte) token.Token {
 }
 
 func (l *Lexer) readIdentifier() string {
-	position := l.position
+	initialPosition := l.position
 	for isLetter(l.ch) {
 		l.readChar()
 	}
-	return l.input[position:l.position]
+	return l.input[initialPosition:l.position]
 }
 
 // NOTE: the lack of support for floats, hex, octal notation etc.
 func (l *Lexer) readNumber() string {
-	position := l.position
+	initialPosition := l.position
 	for isDigit(l.ch) {
 		l.readChar()
 	}
-	return l.input[position:l.position]
+	return l.input[initialPosition:l.position]
 }
 
 // NOTE: This is where more special characters could be cased
