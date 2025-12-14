@@ -230,6 +230,29 @@ they would be multiple bytes long
     - using `l.input[l.readPosition]` wouldnt work anymore and we'd have to
     change other methods and functions we create later on
 
+## 1.4 Extending our token set and lexer
+
+The new tokens we will need to add can be classified as one of the following:
+
+- one character token
+    - `-`
+- two character token
+    - `==`
+- keyword token
+    - `return`
+
+> See lexer/lexer_test.go and lexer/lexer.go
+
+Note that in the tests, some lines in the input are just nonsense. That is ok,
+since the lexers job is not to tell us if the code makes sense. It just has to
+turn the characters into tokens.
+
+For two character tokens, we cant just add cases to our `NextToken` function as
+our switch statement reads the input character by chacatter. We cant compare our
+`l.ch` byte with strings like `==`. What we can do instead is to reuse the 
+existing branches for `=` and `!` and extend them. What we'll do is look ahead
+in the input and then determine whether to return a token for `=` or `==`.
+
 # References 
 
 - "Writing an Interpreter in Go" by Thorsten Ball

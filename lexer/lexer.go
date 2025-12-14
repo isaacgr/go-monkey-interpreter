@@ -45,6 +45,13 @@ func (l *Lexer) NextToken() token.Token {
 	l.skipWhitespace()
 	switch l.ch {
 	case '=':
+		// Note that here and below, we save l.ch to a local variable before
+		// calling readChar again
+		// This way we can safely advance the lexer so it leaves NextToken
+		// with l.position and l.readPosition in the correct state
+		// If we were to support more than these two character tokens in the
+		// language, we should probably abstract that away in a new method
+		// that both peeks and advances 
 		if l.peekChar() == '=' {
 			ch := l.ch
 			l.readChar()
